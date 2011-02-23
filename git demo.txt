@@ -1,3 +1,5 @@
+*** Git does not "check out" files (contrast with git checkout terminology)
+
 >>>> What I'm showing you
 ->>> Creating a repository
 ->>> Working with a local repository
