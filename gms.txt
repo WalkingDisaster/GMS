@@ -1,0 +1,20 @@
+** A bit of theory
+objects and hashes
+plumbing and porcelain
+staging and working directory
+
+
+** Basic commands
+git checkout - not your father's checkout
+git branch - your new best friend
+git merge - many flavors of win
+  --ff - fast forward = easy merge
+  --no-ff - non fast forward = traditional merge
+git rebase - like merge, but better (sometimes)
+git reset
+
+** Repositories
+git init - creating a repository
+.gitignore file
+git clone - now you have an origin
+
