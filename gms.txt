@@ -18,3 +18,4 @@ git init - creating a repository
 .gitignore file
 git clone - now you have an origin
 
+hi there
