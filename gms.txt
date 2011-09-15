@@ -83,6 +83,8 @@
 > gitk --all :: back to where we were
 > git rebase spanish :: applies the commits to the current head one at a time
 > gitk --all :: do you see what happened here?
+
+** MERGE CONFLICTS
 > vim README :: make changes on the first line
 > git commit -am "making breaking changes on the master branch" :: commit
 > git checkout spanish :: go to the spanish branch
