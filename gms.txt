@@ -1,20 +1,167 @@
-** A bit of theory
-objects and hashes
-plumbing and porcelain
-staging and working directory
+** CREATING A REPOSITORY
+> mkdir first :: create a working directory
+> cd first :: navigate to the directory
+> git init :: create a git repository in your working directory
+> git status :: check the status of the repository (should be in its initial state)
+> vim README :: create a new file with content
+    This is my first Git commit.
+> git status :: should show untracked file
+> git commit :: rejected because no files staged
 
+** WORKING DIRECTORY AND STAGING
+> git add README :: stages README for commit
+> git commit :: commits README to the repository
+> git status :: should show no changes
+> git log :: shows the commit history
+> git show [hash from the log] :: shows details of the commit
+> vim README :: add another line (any text will do)
+> git status :: should show the unstaged change
+> vim README :: remove the line you just added
+> git status :: should show no changes again
 
-** Basic commands
-git checkout - not your father's checkout
-git branch - your new best friend
-git merge - many flavors of win
-  --ff - fast forward = easy merge
-  --no-ff - non fast forward = traditional merge
-git rebase - like merge, but better (sometimes)
-git reset
+** ROLLING BACK CHANGES
+> vim README :: add some text
+> git add . :: stages all files with changes
+> git status :: should show the file is staged
+> git reset :: unstages the file
+> git status :: shows it as unstaged once again
+> git reset --hard :: replaces the working directory files with the HEAD files
+> vim README :: add some junk text
+> git commit -a :: the -a will stage and commit any files in one step
+> git log :: you should see two commits now
+> git reset --hard HEAD^ :: resets the head to the commit previous to the head commit
+> git log :: you should now see that the last commit was erased
 
-** Repositories
-git init - creating a repository
-.gitignore file
-git clone - now you have an origin
+** IGNORING FILES AND CLEANING YOUR WORKING DIRECTORY
+> vim .gitignore :: add ignore patterns
+    .gitignore
+    *ignoreme
+    /foldertoignore
+    /foldertoignore/*.txt
+> touch ignoremeplease :: won't be ignored because it doesn't fit the pattern
+> touch youshouldignoreme :: will be ignored
+> mkdir foldertoignore :: will be ignored
+> touch foldertoignore/bar.txt :: will be ignored
+> touch foldertoignore/foo.bar :: ignored, because files under an ignored directory are also ignored
+> git status :: you only see "ignoremeplease"
+> git reset --hard :: what the heck, all the files are still there
+> git commit -a :: why didn't it add the untracked file?
+> git clean -n :: tells me what a git clean would remove
+> git clean -f :: actually executes the clean
+> git status :: we're clean again
+> ls our ignored files are still there
+> touch ignoremeplease
+> git clean -dxn :: now you can see that we will remove ignored files too
+> git clean -dxf :: executes the clean
+> ls :: now we're really clean
 
+** WORKING WITH BRANCHES
+> git branch spanish :: creates a branch called "spanish"
+> git branch :: shows all local branches, the branch you're on has an asterisk
+> git checkout spanish :: this is not your father's checkout
+> git branch :: we're not on the spanish branch
+> vim README :: add the line below
+    Este es mi compromiso git primero.
+> git diff :: shows what you changed
+> git diff --stat :: shows only the filenames of the changes
+> git commit -am "added the line in espagnol" :: -am means to stage any changes and commit with the message that follows.
+> git diff :: no difference now (between working directory and HEAD)
+> git diff master :: shows the difference between the current branch and
+
+** MERGING
+> git checkout master :: go back to the master branch
+> git merge spanish :: merge the spanish branch into master
+> git diff spanish :: no differences
+> git reset --hard HEAD^ :: lets go back, because I want to show you something
+> vim file.txt :: add anything
+> git add . :: add the new file to the index
+> git commit -am "added file.txt" :: commit the file
+> gitk :: shows the history of this branch
+> gitk --all :: shows all branches
+> git merge spanish :: merges the spanish branch
+> git reset --hard HEAD^ :: let's do it again in a different way
+> gitk --all :: back to where we were
+> git rebase spanish :: applies the commits to the current head one at a time
+> gitk --all :: do you see what happened here?
+> vim README :: make changes on the first line
+> git commit -am "making breaking changes on the master branch" :: commit
+> git checkout spanish :: go to the spanish branch
+> vim README :: make conflicting changes on the first line
+> git commit -am "more breaking changes" :: commit
+> git checkout master :: go back to master
+> git merge spanish :: try to merge. you'll have merge conflicts
+> git mergetool :: resolve the merge
+> git reset --hard :: let's go back (you could have committed the changes, but we're going to do a rebase just for practice)
+> git rebase spanish :: let's rebase spanish
+> git mergetool :: do the merge
+> git rebase :: see your options
+> git rebase --continue :: finish the rebase
+
+** STASHING A DIRTY WIRKING DIRECTORY AND INDEX
+> git checkout spanish :: let's make some more changes
+> vim some_file.txt :: add any text
+> git add . :: stage the file
+> vim README :: make some changes
+> git status :: we have unstaged and staged changes
+> git stash :: not ready to commit, but put this away for a while
+> git status :: we're clean again
+> ls :: no stray files
+> gitk --all :: notice the funkyness? we have one commit for staging and one for the working directory
+> git stash pop :: pops the stashed commits
+> git status :: whoa, it's all there again!
+> ls :: seriously, it's all there
+> git commit -am "just for prosperity" :: let's put these changes in the repository
+
+** TAGGING
+> git checkout master :: go back to master
+> git tag v0.1-lightweight :: create a lightweight tag
+> git tag v0.1-annotated -a :: create an annotated tag
+> git tag v0.1-signed -s :: create a signed tag
+> git tag :: shows the tags
+> git show v0.1-lightweight
+> git show v0.1-annotated
+> git show v0.1-signed
+
+** CLONING
+> cd .. :: let's go back so we can create another repository
+> git clone first second :: make a clone of the first repository, call it "second"
+> cd second :: navigate to the "second" repository
+> git remote :: show remote repositories. "origin" is usually used to denote the repository that this one was clone from
+> vim .git/config :: notice the configuration fo the master branch
+
+** GETTING CHANGES FROM A REMOTE
+> cd ../first/ :: go back to first
+> mvim README :: make a change
+> cd ../second/ :: back to see our changes
+> git fetch origin :: gets the remote branches from origin. Since it's origin, "git fetch" would have worked (without the origin part)
+> git branch -a :: show all branches, including remote branches
+> git merge origin/master :: merge origin master into local master
+> vim README :: just to prove it
+> cd ../first/
+> mvim README :: add some more stuff
+> git commit -am "more changes in first"
+> cd ../second/
+> git pull origin master :: again, just "git pull" would have worked here since origin is the remote for master
+> vim README :: to prove it once again
+
+** CREATE A TRACKING BRANCH
+> git branch -t spanish origin/spanish :: create a remote tracking branch that tracks to the "spanish" branch on origin
+> git branch :: there's a branch here
+> vim .git/config :: see how it's configured?
+
+** PUSHING OLD SKUUL STYLE
+> cd .. :: go back up
+> git clone --bare first central :: clone a bare repository into central
+> cd central :: let's look around
+> ls :: these are the contents of the git directory.  There's no working directory here.
+> cd second
+> vim README :: make more changes
+> git commit -am "changes to be pushed" :: commit the changes
+> git push origin master :: we can't do this because our origin has a working directory (and once again, just "git push" would have worked here)
+> vim .git/config :: we're going to change our origin change the "url" line under "[remote "origin"]" to:
+    url = /Users/michael/proj/gms-demo/central
+> git push :: pushed the changes to the remote
+> cd .. :: back up a level
+> git clone central third :: gonna clone central so we can see the change we just made.
+> cd third
+> mvim README :: here are our changes
