@@ -2,6 +2,8 @@
 > mkdir first :: create a working directory
 > cd first :: navigate to the directory
 > git init :: create a git repository in your working directory
+> ls -a :: notice there is a .git folder
+> ls .git/ :: These are the innards of Git
 > git status :: check the status of the repository (should be in its initial state)
 > vim README :: create a new file with content
     This is my first Git commit.
@@ -166,4 +168,4 @@
 > cd .. :: back up a level
 > git clone central third :: gonna clone central so we can see the change we just made.
 > cd third
-> mvim README :: here are our changes
+> vim README :: here are our changes
